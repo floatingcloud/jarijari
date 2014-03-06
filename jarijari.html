@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<style> 
+
+
+  .jari{
+      
+    width : 100%;
+    height : 100%;
+    overflow : hidden;
+   
+     
+  }
+
+  .cell{
+     margin-bottom : 1px;
+     padding : 0px;
+     float : left;
+     width : 50px;
+     height : 80px;
+     border : 1px solid black;
+
+  }
+
+  .partitions
+  {
+    float : left;
+    margin : 20px;
+  }
+
+  .selector
+  {
+    margin : 1px;
+    padding : 1px;
+    width : 500px;
+    height : 200px;
+    border :  1px solid black;
+  }
+  .slectorCell
+  {
+    float : left;
+    border : 1px solid black;
+  }
+
+</style> 
+
+
+<script type='text/javascript' src='jquery-2.0.3.min.js'></script>
+<script type="text/javascript" charset='utf-8'>
+
+  var partitions=2;
+  var rows=10;
+  var columns=10;
+  var persons=["강민재","강  솔","고우리","고은솔","김가람","김근일","김대원","김미연","김미진","김민규","큰민수",
+  "작민수","김민진","김보미","김성진","김소미","김수정","김영민","김우열","김욱환","김웅","김은담","김종훈","김충길","남궁다정","남윤",
+  "노성은","노수지","류예은","류정민","박강석","박경서","박미연","박성근","박소현","박수진","박재욱","박정기","박정웅","박주희","박준규",
+  "박준선","박지영","박현성","박현수","배윤주","서미경","서희원","안아영","원승연","유슬미","윤경식","이경섭","이명진","이병민","이상우",
+  "이상훈","이소피아","이승엽","이승창","이우람","이유선","이은진","이재희","이종화","이훈기","임영욱","전영돈","전준희","정유진","정지원",
+  "조설아","조원우","조일산","최종훈","하상운","한선희","한소현","한우람","허영재","현정민","홍영선","정진우","문석준","박주영"
+  ];
+  var selectedPerson;
+  var selectedPosition={};
+  function shuffle(o){
+    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+  };
+  function play(){
+    var itr=0;
+    for(var i=0;i<partitions;i++){
+       for(var j=0;j<rows;j++){
+           for(var k=0;k<columns;k++){
+
+              if($('div[partision='+(i).toString()+'][row='+(j).toString()+'][column='+(k).toString()+']').attr('active')=='true'){
+                  $('div[partision='+(i).toString()+'][row='+(j).toString()+'][column='+(k).toString()+']').text(persons[itr]);
+                  itr++;
+                  }
+
+
+
+
+
+     // loop closing       
+           }
+       }
+    }
+$('.selector').empty();
+
+
+  }
+
+  $(document).ready(function(){
+
+
+
+
+      $('.selector').hide();
+
+      $('#shu').click(function(){shuffle(persons)});
+      $('#pl').click(function(){play()});
+
+
+      $('#set').click(function(){
+           partitions= $('input[name=part]').val();
+           rows=$('input[name=rw]').val();
+           columns=$('input[name=col]').val();
+
+
+
+                 var num=0;
+
+      for(var i=0;i<partitions;i++){
+             $('<div></div>').addClass("partitions").addClass("partition"+(i).toString()).appendTo('div.jari');
+            for(var j=0;j<rows;j++){
+                $('<div></div>').addClass("row"+(j).toString()).appendTo("div.partition"+(i).toString());
+                for(var k=0;k<columns;k++){
+                   $('<div></div>').addClass('cell')
+                   .addClass("column"+(k).toString()).appendTo("div.partition"+(i).toString()+">div.row"+
+                     (j).toString()).attr('partision',i).attr('row',j).attr('column',k).attr('active','true').on('dblclick',function(){
+
+
+                     if($(this).attr('active')=='true'){
+                                 $(this).attr('active','false');
+                                 $(this).css({'background-color' : 'black'});
+                     }else{
+                                 $(this).attr('active','true');
+                                 $(this).css({'background-color' : 'white'});
+                     }
+
+
+                     }).on('click',function(){
+
+                         $('.selector').show();
+                         selectedPosition.partision=$(this).attr('partision');
+                         selectedPosition.row=$(this).attr('row');
+                         selectedPosition.column=$(this).attr('column');
+
+
+
+                         //// selector
+                         for(var i=0;i<persons.length;i++){
+
+                              $('<div></div>').addClass('slectorCell').addClass(persons[i]).text(persons[i]).on('click',function(){
+
+                                 selectedPerson = $(this).text();    
+                                 $('div[partision='+selectedPosition.partision+'][row='+selectedPosition.row+
+                                 '][column='+selectedPosition.column+']').text(selectedPerson).attr('active','false');
+                                 persons=jQuery.grep(persons, function(value) {
+                                               return value != selectedPerson;
+                                           });
+
+                                 $('.selector').hide();
+                                 $('.selector').empty();
+
+
+                               }).appendTo(".selector");
+
+                        }
+
+
+
+
+
+
+
+
+
+
+                         ///
+
+
+  
+                    });
+
+                   }
+
+             }
+      }
+
+
+
+
+
+
+           //////////////////
+
+      });
+
+
+
+  });
+
+
+</script>
+
+
+
+<title>jarijari</title>
+
+</head>
+
+   <body>
+
+   <div class="menu">
+     <label>분단수:</label><input type="text" name="part"></input> 
+     <label>행수:</label><input type="text" name="rw"></input> 
+     <label>열수:</label><input type="text" name="col"></input> 
+     <button type="button" id="set">세팅적용</button>
+     <button type="button" id="shu">섞기</button>
+     <button type="button" id="pl">배치</button>
+   
+   
+   </div>
+
+   <div class="jari">
+     
+   </div>
+   <div class="selector" >
+   
+   </div>
+
+
+   </body>
+
+
+</html>
+
+
+
+
